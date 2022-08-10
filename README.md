@@ -1,5 +1,5 @@
 # Python-Web-Scraping-
-The code and websites are based on a training coures i took "Modern Web Scraping Fundamentals with Python" - Jordan Sauchuk.
+The code and websites are based on a training coures i took i Udemy "Modern Web Scraping Fundamentals with Python" - Jordan Sauchuk.
 - Python 3
 - Selenium
 - Anaconda(Spyder)

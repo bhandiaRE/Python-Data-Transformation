@@ -1,5 +1,5 @@
 # Python-Web-Scraping-
-The code and websites are based on a training coures i took i Udemy "Modern Web Scraping Fundamentals with Python" - Jordan Sauchuk.
+The code and websites are based on a training coures i took on Udemy "Modern Web Scraping Fundamentals with Python" - Jordan Sauchuk.
 The courses is a beginners level. My internet connecting is slow hance the long sleep time.
 - Python 3
 - Selenium

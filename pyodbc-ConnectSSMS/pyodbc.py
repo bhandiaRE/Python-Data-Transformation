@@ -15,7 +15,7 @@ cnxn.autocommit = True
 
 
 data = json.loads(r.text)
-for i in range(0,3):
+for i in range(0,396):
     name = (data['stations'][i]['station_address'])
     
     json_string = json.dumps(name)

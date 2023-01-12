@@ -1,0 +1,355 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/bhandiaRE/Python-Data-Transformation/blob/main/PySpark/SparkSqltest\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip3 install pyspark"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1LW_eKkNk8Ym",
+        "outputId": "62c5e79c-5913-4b52-f06d-02838672b351"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/\n",
+            "Collecting pyspark\n",
+            "  Downloading pyspark-3.3.1.tar.gz (281.4 MB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m281.4/281.4 MB\u001b[0m \u001b[31m4.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h  Preparing metadata (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "Collecting py4j==0.10.9.5\n",
+            "  Downloading py4j-0.10.9.5-py2.py3-none-any.whl (199 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m199.7/199.7 KB\u001b[0m \u001b[31m18.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hBuilding wheels for collected packages: pyspark\n",
+            "  Building wheel for pyspark (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for pyspark: filename=pyspark-3.3.1-py2.py3-none-any.whl size=281845512 sha256=26eb53105d8a3efcd7cc0a8f72db56880fe9b7f8d9790cbda24e4b8591bcb965\n",
+            "  Stored in directory: /root/.cache/pip/wheels/43/dc/11/ec201cd671da62fa9c5cc77078235e40722170ceba231d7598\n",
+            "Successfully built pyspark\n",
+            "Installing collected packages: py4j, pyspark\n",
+            "Successfully installed py4j-0.10.9.5 pyspark-3.3.1\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from pyspark.sql import SparkSession\n",
+        "\n",
+        "spark = SparkSession.builder.master('local[*]').getOrCreate()\n",
+        "\n",
+        "spark"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 219
+        },
+        "id": "En7JBYoQlAYk",
+        "outputId": "2fea62e6-521d-4080-ee3c-7afee0a7e409"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<pyspark.sql.session.SparkSession at 0x7f9c5ca0d580>"
+            ],
+            "text/html": [
+              "\n",
+              "            <div>\n",
+              "                <p><b>SparkSession - in-memory</b></p>\n",
+              "                \n",
+              "        <div>\n",
+              "            <p><b>SparkContext</b></p>\n",
+              "\n",
+              "            <p><a href=\"http://e5f5a8f0175b:4040\">Spark UI</a></p>\n",
+              "\n",
+              "            <dl>\n",
+              "              <dt>Version</dt>\n",
+              "                <dd><code>v3.3.1</code></dd>\n",
+              "              <dt>Master</dt>\n",
+              "                <dd><code>local[*]</code></dd>\n",
+              "              <dt>AppName</dt>\n",
+              "                <dd><code>pyspark-shell</code></dd>\n",
+              "            </dl>\n",
+              "        </div>\n",
+              "        \n",
+              "            </div>\n",
+              "        "
+            ]
+          },
+          "metadata": {},
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "pZoVI3-_leNh",
+        "outputId": "08744279-0252-4c1d-a405-8ee0303dadee"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/drive\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = spark.read.json(\"/content/drive/MyDrive/arxiv-metadata-oai-snapshot.json\")\n",
+        "df.show()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "b5oY6iRxlkLE",
+        "outputId": "e053f933-ad73-4914-e39c-451c90dd1780"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+--------------------+--------------------+-----------------+--------------------+--------------------+---------+--------------------+--------------------+--------------------+------------------+--------------------+-----------+--------------------+\n",
+            "|            abstract|             authors|      authors_parsed|       categories|            comments|                 doi|       id|         journal-ref|             license|           report-no|         submitter|               title|update_date|            versions|\n",
+            "+--------------------+--------------------+--------------------+-----------------+--------------------+--------------------+---------+--------------------+--------------------+--------------------+------------------+--------------------+-----------+--------------------+\n",
+            "|  A fully differe...|C. Bal\\'azs, E. L...|[[Balázs, C., ], ...|           hep-ph|37 pages, 15 figu...|10.1103/PhysRevD....|0704.0001|Phys.Rev.D76:0130...|                null|    ANL-HEP-PR-07-12|    Pavel Nadolsky|Calculation of pr...| 2008-11-26|[{Mon, 2 Apr 2007...|\n",
+            "|  We describe a n...|Ileana Streinu an...|[[Streinu, Ileana...|    math.CO cs.CG|To appear in Grap...|                null|0704.0002|                null|http://arxiv.org/...|                null|      Louis Theran|Sparsity-certifyi...| 2008-12-13|[{Sat, 31 Mar 200...|\n",
+            "|  The evolution o...|         Hongjun Pan|  [[Pan, Hongjun, ]]|   physics.gen-ph| 23 pages, 3 figures|                null|0704.0003|                null|                null|                null|       Hongjun Pan|The evolution of ...| 2008-01-13|[{Sun, 1 Apr 2007...|\n",
+            "|  We show that a ...|        David Callan| [[Callan, David, ]]|          math.CO|            11 pages|                null|0704.0004|                null|                null|                null|      David Callan|A determinant of ...| 2007-05-23|[{Sat, 31 Mar 200...|\n",
+            "|  In this paper w...|Wael Abu-Shammala...|[[Abu-Shammala, W...|  math.CA math.FA|                null|                null|0704.0005|Illinois J. Math....|                null|                null|Alberto Torchinsky|From dyadic $\\Lam...| 2013-10-15|[{Mon, 2 Apr 2007...|\n",
+            "|  We study the tw...|Y. H. Pong and C....|[[Pong, Y. H., ],...|cond-mat.mes-hall|6 pages, 4 figure...|10.1103/PhysRevA....|0704.0006|                null|                null|                null|      Yue Hin Pong|Bosonic character...| 2015-05-13|[{Sat, 31 Mar 200...|\n",
+            "|  A rather non-st...|Alejandro Corichi...|[[Corichi, Alejan...|            gr-qc|16 pages, no figu...|10.1103/PhysRevD....|0704.0007|Phys.Rev.D76:0440...|                null|        IGPG-07/03-2| Alejandro Corichi|Polymer Quantum M...| 2008-11-26|[{Sat, 31 Mar 200...|\n",
+            "|  A general formu...|     Damian C. Swift|[[Swift, Damian C...|cond-mat.mtrl-sci|   Minor corrections|   10.1063/1.2975338|0704.0008|Journal of Applie...|http://arxiv.org/...|LA-UR-07-2051, LL...|      Damian Swift|Numerical solutio...| 2009-02-05|[{Sat, 31 Mar 200...|\n",
+            "|  We discuss the ...|Paul Harvey, Brun...|[[Harvey, Paul, ]...|         astro-ph|                null|      10.1086/518646|0704.0009|Astrophys.J.663:1...|                null|                null|       Paul Harvey|The Spitzer c2d S...| 2010-03-18|[{Mon, 2 Apr 2007...|\n",
+            "|  Partial cubes a...|  Sergei Ovchinnikov|[[Ovchinnikov, Se...|          math.CO|36 pages, 17 figures|                null|0704.0010|                null|                null|                null|Sergei Ovchinnikov|Partial cubes: st...| 2007-05-23|[{Sat, 31 Mar 200...|\n",
+            "|  In this paper w...|Clifton Cunningha...|[[Cunningham, Cli...|  math.NT math.AG|14 pages; title c...|                null|0704.0011|                null|http://arxiv.org/...|                null|Clifton Cunningham|Computing genus 2...| 2008-08-20|[{Sat, 31 Mar 200...|\n",
+            "|  Recently, Bruin...|         Dohoon Choi|  [[Choi, Dohoon, ]]|          math.NT|                null|                null|0704.0012|                null|                null|                null|       Dohoon Choi|Distribution of i...| 2007-05-23|[{Sat, 31 Mar 200...|\n",
+            "|  Serre obtained ...|Dohoon Choi and Y...|[[Choi, Dohoon, ]...|          math.NT|                null|                null|0704.0013|                null|                null|                null|       Dohoon Choi|$p$-adic Limit of...| 2008-05-26|[{Sat, 31 Mar 200...|\n",
+            "|  In this article...|        Koichi Fujii| [[Fujii, Koichi, ]]|  math.CA math.AT|  18 pages, 1 figure|                null|0704.0014|                null|                null|                null|      Koichi Fujii|Iterated integral...| 2009-09-29|[{Sun, 1 Apr 2007...|\n",
+            "|  The pure spinor...|     Christian Stahn|[[Stahn, Christia...|           hep-th|22 pages; signs a...|10.1088/1126-6708...|0704.0015|  JHEP 0705:034,2007|                null|                null|   Christian Stahn|Fermionic superst...| 2009-11-13|[{Mon, 2 Apr 2007...|\n",
+            "|  In this work, w...|Chao-Hsi Chang, T...|[[Chang, Chao-Hsi...|           hep-ph|17 pages, 3 figur...|10.1088/0253-6102...|0704.0016|Commun.Theor.Phys...|                null|                null|           Li Tong|Lifetime of doubl...| 2008-12-18|[{Sat, 31 Mar 200...|\n",
+            "|  Results from sp...|Nceba Mhlahlo, Da...|[[Mhlahlo, Nceba,...|         astro-ph|10 pages, 11 figu...|10.1111/j.1365-29...|0704.0017|Mon.Not.Roy.Astro...|                null|                null|     Nceba Mhlahlo|Spectroscopic Obs...| 2009-06-23|[{Sat, 31 Mar 200...|\n",
+            "|  We give a presc...|  Andreas Gustavsson|[[Gustavsson, And...|           hep-th|20 pages, v2: an ...|                null|0704.0018|                null|                null|                null|Andreas Gustavsson|In quest of a gen...| 2007-05-23|[{Mon, 2 Apr 2007...|\n",
+            "|  In this note we...|         Norio Konno|  [[Konno, Norio, ]]|  math.PR math.AG|6 pages, Journal-...|                null|0704.0019|RIMS Kokyuroku, N...|                null|                null|       Norio Konno|Approximation for...| 2007-06-23|[{Sat, 31 Mar 200...|\n",
+            "|  The shape of th...|The BABAR Collabo...|[[The BABAR Colla...|           hep-ex|21 pages, 13 post...|10.1103/PhysRevD....|0704.0020|Phys.Rev.D76:0520...|                null|BABAR-PUB-07/015,...|   Patrick Roudeau|Measurement of th...| 2015-06-30|[{Sat, 31 Mar 200...|\n",
+            "+--------------------+--------------------+--------------------+-----------------+--------------------+--------------------+---------+--------------------+--------------------+--------------------+------------------+--------------------+-----------+--------------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Create a new Schema**"
+      ],
+      "metadata": {
+        "id": "-QP-hBn-qskr"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from pyspark.sql.types import *\n",
+        "\n",
+        "Schema = StructType([\n",
+        "                    StructField('authors', StringType(), True),\n",
+        "                     StructField('categories', StringType(), True),\n",
+        "                     StructField('license', StringType(), True),\n",
+        "                     StructField('comments', StringType(), True),\n",
+        "                     StructField('abstract', StringType(), True),\n",
+        "                     StructField('versions', ArrayType(StringType()), True),\n",
+        "                  \n",
+        "])\n",
+        "print(Schema)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ySp-Uerol1Yq",
+        "outputId": "db88d45c-86d2-49a2-98f3-f833be0b5f20"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "StructType([StructField('authors', StringType(), True), StructField('categories', StringType(), True), StructField('license', StringType(), True), StructField('comments', StringType(), True), StructField('abstract', StringType(), True), StructField('versions', ArrayType(StringType(), True), True)])\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = spark.read.json(\"/content/drive/MyDrive/arxiv-metadata-oai-snapshot.json\", schema = Schema)\n",
+        "df.show()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "vQse7UhOq9uQ",
+        "outputId": "b928eff0-611d-4bc0-d745-af8240f73dc0"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+-----------------+--------------------+--------------------+--------------------+--------------------+\n",
+            "|             authors|       categories|             license|            comments|            abstract|            versions|\n",
+            "+--------------------+-----------------+--------------------+--------------------+--------------------+--------------------+\n",
+            "|C. Bal\\'azs, E. L...|           hep-ph|                null|37 pages, 15 figu...|  A fully differe...|[{\"version\":\"v1\",...|\n",
+            "|Ileana Streinu an...|    math.CO cs.CG|http://arxiv.org/...|To appear in Grap...|  We describe a n...|[{\"version\":\"v1\",...|\n",
+            "|         Hongjun Pan|   physics.gen-ph|                null| 23 pages, 3 figures|  The evolution o...|[{\"version\":\"v1\",...|\n",
+            "|        David Callan|          math.CO|                null|            11 pages|  We show that a ...|[{\"version\":\"v1\",...|\n",
+            "|Wael Abu-Shammala...|  math.CA math.FA|                null|                null|  In this paper w...|[{\"version\":\"v1\",...|\n",
+            "|Y. H. Pong and C....|cond-mat.mes-hall|                null|6 pages, 4 figure...|  We study the tw...|[{\"version\":\"v1\",...|\n",
+            "|Alejandro Corichi...|            gr-qc|                null|16 pages, no figu...|  A rather non-st...|[{\"version\":\"v1\",...|\n",
+            "|     Damian C. Swift|cond-mat.mtrl-sci|http://arxiv.org/...|   Minor corrections|  A general formu...|[{\"version\":\"v1\",...|\n",
+            "|Paul Harvey, Brun...|         astro-ph|                null|                null|  We discuss the ...|[{\"version\":\"v1\",...|\n",
+            "|  Sergei Ovchinnikov|          math.CO|                null|36 pages, 17 figures|  Partial cubes a...|[{\"version\":\"v1\",...|\n",
+            "|Clifton Cunningha...|  math.NT math.AG|http://arxiv.org/...|14 pages; title c...|  In this paper w...|[{\"version\":\"v1\",...|\n",
+            "|         Dohoon Choi|          math.NT|                null|                null|  Recently, Bruin...|[{\"version\":\"v1\",...|\n",
+            "|Dohoon Choi and Y...|          math.NT|                null|                null|  Serre obtained ...|[{\"version\":\"v1\",...|\n",
+            "|        Koichi Fujii|  math.CA math.AT|                null|  18 pages, 1 figure|  In this article...|[{\"version\":\"v1\",...|\n",
+            "|     Christian Stahn|           hep-th|                null|22 pages; signs a...|  The pure spinor...|[{\"version\":\"v1\",...|\n",
+            "|Chao-Hsi Chang, T...|           hep-ph|                null|17 pages, 3 figur...|  In this work, w...|[{\"version\":\"v1\",...|\n",
+            "|Nceba Mhlahlo, Da...|         astro-ph|                null|10 pages, 11 figu...|  Results from sp...|[{\"version\":\"v1\",...|\n",
+            "|  Andreas Gustavsson|           hep-th|                null|20 pages, v2: an ...|  We give a presc...|[{\"version\":\"v1\",...|\n",
+            "|         Norio Konno|  math.PR math.AG|                null|6 pages, Journal-...|  In this note we...|[{\"version\":\"v1\",...|\n",
+            "|The BABAR Collabo...|           hep-ex|                null|21 pages, 13 post...|  The shape of th...|[{\"version\":\"v1\",...|\n",
+            "+--------------------+-----------------+--------------------+--------------------+--------------------+--------------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Drop null comments**"
+      ],
+      "metadata": {
+        "id": "-whwU7C1sjNB"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#drop\n",
+        "df = df.dropna(subset = [\"comments\"])\n",
+        "\n",
+        "#replace\n",
+        "df = df.fillna(value = \"unknown\", subset = ['license'])\n",
+        "\n",
+        "df.show()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "92TxnxozsgMR",
+        "outputId": "e9d10263-a8e4-4ada-bafe-88cdb3872717"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+\n",
+            "|             authors|          categories|             license|            comments|            abstract|            versions|\n",
+            "+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+\n",
+            "|C. Bal\\'azs, E. L...|              hep-ph|             unknown|37 pages, 15 figu...|  A fully differe...|[{\"version\":\"v1\",...|\n",
+            "|Ileana Streinu an...|       math.CO cs.CG|http://arxiv.org/...|To appear in Grap...|  We describe a n...|[{\"version\":\"v1\",...|\n",
+            "|         Hongjun Pan|      physics.gen-ph|             unknown| 23 pages, 3 figures|  The evolution o...|[{\"version\":\"v1\",...|\n",
+            "|        David Callan|             math.CO|             unknown|            11 pages|  We show that a ...|[{\"version\":\"v1\",...|\n",
+            "|Y. H. Pong and C....|   cond-mat.mes-hall|             unknown|6 pages, 4 figure...|  We study the tw...|[{\"version\":\"v1\",...|\n",
+            "|Alejandro Corichi...|               gr-qc|             unknown|16 pages, no figu...|  A rather non-st...|[{\"version\":\"v1\",...|\n",
+            "|     Damian C. Swift|   cond-mat.mtrl-sci|http://arxiv.org/...|   Minor corrections|  A general formu...|[{\"version\":\"v1\",...|\n",
+            "|  Sergei Ovchinnikov|             math.CO|             unknown|36 pages, 17 figures|  Partial cubes a...|[{\"version\":\"v1\",...|\n",
+            "|Clifton Cunningha...|     math.NT math.AG|http://arxiv.org/...|14 pages; title c...|  In this paper w...|[{\"version\":\"v1\",...|\n",
+            "|        Koichi Fujii|     math.CA math.AT|             unknown|  18 pages, 1 figure|  In this article...|[{\"version\":\"v1\",...|\n",
+            "|     Christian Stahn|              hep-th|             unknown|22 pages; signs a...|  The pure spinor...|[{\"version\":\"v1\",...|\n",
+            "|Chao-Hsi Chang, T...|              hep-ph|             unknown|17 pages, 3 figur...|  In this work, w...|[{\"version\":\"v1\",...|\n",
+            "|Nceba Mhlahlo, Da...|            astro-ph|             unknown|10 pages, 11 figu...|  Results from sp...|[{\"version\":\"v1\",...|\n",
+            "|  Andreas Gustavsson|              hep-th|             unknown|20 pages, v2: an ...|  We give a presc...|[{\"version\":\"v1\",...|\n",
+            "|         Norio Konno|     math.PR math.AG|             unknown|6 pages, Journal-...|  In this note we...|[{\"version\":\"v1\",...|\n",
+            "|The BABAR Collabo...|              hep-ex|             unknown|21 pages, 13 post...|  The shape of th...|[{\"version\":\"v1\",...|\n",
+            "|Vanessa Casagrand...|nlin.PS physics.c...|             unknown|  5 pages, 4 figures|  Spatiotemporal ...|[{\"version\":\"v1\",...|\n",
+            "|Simon J.A. Malham...|             math.NA|             unknown| 20 pages, 4 figures|  We present Lie ...|[{\"version\":\"v1\",...|\n",
+            "|M. A. Loukitcheva...|            astro-ph|             unknown|4 pages, 2 figure...|  The very nature...|[{\"version\":\"v1\",...|\n",
+            "|A.A. Serga, M. Ko...|             nlin.PS|             unknown|First appeared in...|  The formation o...|[{\"version\":\"v1\",...|\n",
+            "+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "KrukyHCXxLmi"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "name": "Welcome To Colaboratory",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

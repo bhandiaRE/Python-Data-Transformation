@@ -1,0 +1,191 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/bhandiaRE/Python-Data-Transformation/blob/main/PySpark/DFtest\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "metadata": {
+        "id": "AV3eZYyTAYAh",
+        "outputId": "fb62cf67-475c-415c-d227-5b430048202a",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/drive\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip3 install pyspark"
+      ],
+      "metadata": {
+        "id": "AHXfS0MvV1yw",
+        "outputId": "84ca4c0b-c77a-4400-fab6-56d98a39907c",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/\n",
+            "Collecting pyspark\n",
+            "  Downloading pyspark-3.3.1.tar.gz (281.4 MB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m281.4/281.4 MB\u001b[0m \u001b[31m4.6 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h  Preparing metadata (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "Collecting py4j==0.10.9.5\n",
+            "  Downloading py4j-0.10.9.5-py2.py3-none-any.whl (199 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m199.7/199.7 KB\u001b[0m \u001b[31m14.3 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hBuilding wheels for collected packages: pyspark\n",
+            "  Building wheel for pyspark (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for pyspark: filename=pyspark-3.3.1-py2.py3-none-any.whl size=281845512 sha256=fd2f19a67f8b3110ad7f2932603721b2164da18ca5c27efb88e931ca507986ed\n",
+            "  Stored in directory: /root/.cache/pip/wheels/43/dc/11/ec201cd671da62fa9c5cc77078235e40722170ceba231d7598\n",
+            "Successfully built pyspark\n",
+            "Installing collected packages: py4j, pyspark\n",
+            "Successfully installed py4j-0.10.9.5 pyspark-3.3.1\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "from pyspark.sql import SparkSession\n",
+        "spark = SparkSession.builder.master('local[*]').getOrCreate()\n",
+        "spark"
+      ],
+      "metadata": {
+        "id": "A0hgAJ0KcNI7",
+        "outputId": "97b2adf2-9be5-4f0a-f5de-8a490b74a666",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 219
+        }
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<pyspark.sql.session.SparkSession at 0x7f29544d5c70>"
+            ],
+            "text/html": [
+              "\n",
+              "            <div>\n",
+              "                <p><b>SparkSession - in-memory</b></p>\n",
+              "                \n",
+              "        <div>\n",
+              "            <p><b>SparkContext</b></p>\n",
+              "\n",
+              "            <p><a href=\"http://9f6a488b8db9:4040\">Spark UI</a></p>\n",
+              "\n",
+              "            <dl>\n",
+              "              <dt>Version</dt>\n",
+              "                <dd><code>v3.3.1</code></dd>\n",
+              "              <dt>Master</dt>\n",
+              "                <dd><code>local[*]</code></dd>\n",
+              "              <dt>AppName</dt>\n",
+              "                <dd><code>pyspark-shell</code></dd>\n",
+              "            </dl>\n",
+              "        </div>\n",
+              "        \n",
+              "            </div>\n",
+              "        "
+            ]
+          },
+          "metadata": {},
+          "execution_count": 3
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "df = spark.read.text(\"/content/drive/MyDrive/Colab Notebooks/kddcup.data.gz\")\n",
+        "df.show()"
+      ],
+      "metadata": {
+        "id": "FUPnXHMocWKj",
+        "outputId": "b2c3028b-edaa-4734-c1e9-fdb1e6eb7e28",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+\n",
+            "|               value|\n",
+            "+--------------------+\n",
+            "|0,tcp,http,SF,215...|\n",
+            "|0,tcp,http,SF,162...|\n",
+            "|0,tcp,http,SF,236...|\n",
+            "|0,tcp,http,SF,233...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "|0,tcp,http,SF,238...|\n",
+            "|0,tcp,http,SF,235...|\n",
+            "|0,tcp,http,SF,234...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "|0,tcp,http,SF,181...|\n",
+            "|0,tcp,http,SF,184...|\n",
+            "|0,tcp,http,SF,185...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "|0,tcp,http,SF,181...|\n",
+            "|0,tcp,http,SF,236...|\n",
+            "|0,tcp,http,SF,233...|\n",
+            "|0,tcp,http,SF,238...|\n",
+            "|0,tcp,http,SF,235...|\n",
+            "|0,tcp,http,SF,234...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "+--------------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "name": "Welcome To Colaboratory",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

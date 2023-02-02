@@ -1,0 +1,451 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/bhandiaRE/Python-Data-Transformation/blob/main/PySpark/StructuredData\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "metadata": {
+        "id": "AV3eZYyTAYAh",
+        "outputId": "d4c6feba-f036-4672-cb67-dabf2466a48e",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/drive\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip3 install pyspark"
+      ],
+      "metadata": {
+        "id": "AHXfS0MvV1yw",
+        "outputId": "ccc38282-744b-404e-cb2c-1504d96b97b1",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/\n",
+            "Collecting pyspark\n",
+            "  Downloading pyspark-3.3.1.tar.gz (281.4 MB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m281.4/281.4 MB\u001b[0m \u001b[31m5.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h  Preparing metadata (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "Collecting py4j==0.10.9.5\n",
+            "  Downloading py4j-0.10.9.5-py2.py3-none-any.whl (199 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m199.7/199.7 KB\u001b[0m \u001b[31m21.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hBuilding wheels for collected packages: pyspark\n",
+            "  Building wheel for pyspark (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for pyspark: filename=pyspark-3.3.1-py2.py3-none-any.whl size=281845512 sha256=6bbf8741e2784bbc34ce12bc37e1893114b2c209a1ec71bb0023277ef0aacb91\n",
+            "  Stored in directory: /root/.cache/pip/wheels/43/dc/11/ec201cd671da62fa9c5cc77078235e40722170ceba231d7598\n",
+            "Successfully built pyspark\n",
+            "Installing collected packages: py4j, pyspark\n",
+            "Successfully installed py4j-0.10.9.5 pyspark-3.3.1\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from pyspark.sql import SparkSession\n",
+        "spark = SparkSession.builder.master('local[*]').getOrCreate()\n",
+        "spark"
+      ],
+      "metadata": {
+        "id": "A0hgAJ0KcNI7",
+        "outputId": "0dc650a9-6e64-450b-8deb-adc80e7aa7b9",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 219
+        }
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<pyspark.sql.session.SparkSession at 0x7f88065bb0a0>"
+            ],
+            "text/html": [
+              "\n",
+              "            <div>\n",
+              "                <p><b>SparkSession - in-memory</b></p>\n",
+              "                \n",
+              "        <div>\n",
+              "            <p><b>SparkContext</b></p>\n",
+              "\n",
+              "            <p><a href=\"http://abc0bc05cd8d:4040\">Spark UI</a></p>\n",
+              "\n",
+              "            <dl>\n",
+              "              <dt>Version</dt>\n",
+              "                <dd><code>v3.3.1</code></dd>\n",
+              "              <dt>Master</dt>\n",
+              "                <dd><code>local[*]</code></dd>\n",
+              "              <dt>AppName</dt>\n",
+              "                <dd><code>pyspark-shell</code></dd>\n",
+              "            </dl>\n",
+              "        </div>\n",
+              "        \n",
+              "            </div>\n",
+              "        "
+            ]
+          },
+          "metadata": {},
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = spark.read.text(\"/content/drive/MyDrive/Colab Notebooks/kddcup.data.gz\")\n",
+        "df.show()"
+      ],
+      "metadata": {
+        "id": "FUPnXHMocWKj",
+        "outputId": "05b80fa1-5ee8-46ca-f05e-757d60c36bba",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+\n",
+            "|               value|\n",
+            "+--------------------+\n",
+            "|0,tcp,http,SF,215...|\n",
+            "|0,tcp,http,SF,162...|\n",
+            "|0,tcp,http,SF,236...|\n",
+            "|0,tcp,http,SF,233...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "|0,tcp,http,SF,238...|\n",
+            "|0,tcp,http,SF,235...|\n",
+            "|0,tcp,http,SF,234...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "|0,tcp,http,SF,181...|\n",
+            "|0,tcp,http,SF,184...|\n",
+            "|0,tcp,http,SF,185...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "|0,tcp,http,SF,181...|\n",
+            "|0,tcp,http,SF,236...|\n",
+            "|0,tcp,http,SF,233...|\n",
+            "|0,tcp,http,SF,238...|\n",
+            "|0,tcp,http,SF,235...|\n",
+            "|0,tcp,http,SF,234...|\n",
+            "|0,tcp,http,SF,239...|\n",
+            "+--------------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Split the data and load**"
+      ],
+      "metadata": {
+        "id": "mzUNl9sJmgkK"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from pyspark.sql.functions import *\n",
+        "\n",
+        "split_data = split(df['value'], ',')\n",
+        "\n",
+        "df = df.withColumn('Protocol', split_data.getItem(1))\\\n",
+        "        .withColumn('Service', split_data.getItem(2))\\\n",
+        "        .withColumn('Flag', split_data.getItem(3))\\\n",
+        "        .withColumn('src_bytes', split_data.getItem(4))\\\n",
+        "        .withColumn('dst_bytes', split_data.getItem(5))\\\n",
+        "        .withColumn('urgent', split_data.getItem(8))\\\n",
+        "        .withColumn('faild_logs', split_data.getItem(10))\\\n",
+        "        .withColumn('root_shell', split_data.getItem(13))\\\n",
+        "        .withColumn('guest_login', split_data.getItem(21))\\\n",
+        "        .withColumn('label', split_data.getItem(41))\\\n",
+        "        .drop('value')\n",
+        "\n",
+        "df.show()"
+      ],
+      "metadata": {
+        "id": "kmHt8f3mm0QP",
+        "outputId": "fedbda70-0130-44ba-ea52-f02a4a4e660b",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------+-------+----+---------+---------+------+----------+----------+-----------+-------+\n",
+            "|Protocol|Service|Flag|src_bytes|dst_bytes|urgent|faild_logs|root_shell|guest_login|  label|\n",
+            "+--------+-------+----+---------+---------+------+----------+----------+-----------+-------+\n",
+            "|     tcp|   http|  SF|      215|    45076|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      162|     4528|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      236|     1228|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      233|     2032|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      239|      486|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      238|     1282|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      235|     1337|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      234|     1364|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      239|     1295|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      181|     5450|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      184|      124|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      185|     9020|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      239|     1295|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      181|     5450|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      236|     1228|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      233|     2032|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      238|     1282|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      235|     1337|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      234|     1364|     0|         0|         0|          0|normal.|\n",
+            "|     tcp|   http|  SF|      239|      486|     0|         0|         0|          0|normal.|\n",
+            "+--------+-------+----+---------+---------+------+----------+----------+-----------+-------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Count the number of connections for lable**"
+      ],
+      "metadata": {
+        "id": "NSBgxbfzxPj3"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df.groupby('label').count().orderBy('count', ascending=False).show()"
+      ],
+      "metadata": {
+        "id": "Sa72vwyexAjo",
+        "outputId": "b0b1a961-e6fa-48df-c0ca-a478e27fa68c",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+----------------+-------+\n",
+            "|           label|  count|\n",
+            "+----------------+-------+\n",
+            "|          smurf.|2807886|\n",
+            "|        neptune.|1072017|\n",
+            "|         normal.| 972781|\n",
+            "|          satan.|  15892|\n",
+            "|        ipsweep.|  12481|\n",
+            "|      portsweep.|  10413|\n",
+            "|           nmap.|   2316|\n",
+            "|           back.|   2203|\n",
+            "|    warezclient.|   1020|\n",
+            "|       teardrop.|    979|\n",
+            "|            pod.|    264|\n",
+            "|   guess_passwd.|     53|\n",
+            "|buffer_overflow.|     30|\n",
+            "|           land.|     21|\n",
+            "|    warezmaster.|     20|\n",
+            "|           imap.|     12|\n",
+            "|        rootkit.|     10|\n",
+            "|     loadmodule.|      9|\n",
+            "|      ftp_write.|      8|\n",
+            "|       multihop.|      7|\n",
+            "+----------------+-------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df.createOrReplaceTempView(\"Archive\")\n",
+        "\n",
+        "spark_sql=(\"\"\"\n",
+        "            SELECT label, COUNT(label) FROM Archive\n",
+        "            GROUP BY label\n",
+        "            ORDER BY COUNT(label) DESC\n",
+        "\"\"\")\n",
+        "spark.sql(spark_sql).show()"
+      ],
+      "metadata": {
+        "id": "XPw1j4mo3nRO",
+        "outputId": "45e80606-b5d8-4d12-b922-77bb75899dc8",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+----------------+------------+\n",
+            "|           label|count(label)|\n",
+            "+----------------+------------+\n",
+            "|          smurf.|     2807886|\n",
+            "|        neptune.|     1072017|\n",
+            "|         normal.|      972781|\n",
+            "|          satan.|       15892|\n",
+            "|        ipsweep.|       12481|\n",
+            "|      portsweep.|       10413|\n",
+            "|           nmap.|        2316|\n",
+            "|           back.|        2203|\n",
+            "|    warezclient.|        1020|\n",
+            "|       teardrop.|         979|\n",
+            "|            pod.|         264|\n",
+            "|   guess_passwd.|          53|\n",
+            "|buffer_overflow.|          30|\n",
+            "|           land.|          21|\n",
+            "|    warezmaster.|          20|\n",
+            "|           imap.|          12|\n",
+            "|        rootkit.|          10|\n",
+            "|     loadmodule.|           9|\n",
+            "|      ftp_write.|           8|\n",
+            "|       multihop.|           7|\n",
+            "+----------------+------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df.createOrReplaceTempView(\"Archive\")\n",
+        "spark_sqls = \"\"\"\n",
+        "            SELECT Protocol,\n",
+        "            CASE label\n",
+        "              WHEN 'normal.' THEN 'no attack'\n",
+        "              ELSE 'attack'\n",
+        "            END AS State,\n",
+        "            COUNT(*) AS freq\n",
+        "            FROM Archive\n",
+        "            WHERE guest_login != '1'\n",
+        "            GROUP BY Protocol, State\n",
+        "            ORDER BY Protocol DESC\n",
+        "\"\"\"\n",
+        "spark.sql(spark_sqls).show()"
+      ],
+      "metadata": {
+        "id": "jXjvN1pRWLCs",
+        "outputId": "46f4a097-504e-46da-8905-896786abc19a",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------+---------+-------+\n",
+            "|Protocol|    State|   freq|\n",
+            "+--------+---------+-------+\n",
+            "|     udp|no attack| 191348|\n",
+            "|     udp|   attack|   2940|\n",
+            "|     tcp|no attack| 764894|\n",
+            "|     tcp|   attack|1101613|\n",
+            "|    icmp|   attack|2820782|\n",
+            "|    icmp|no attack|  12763|\n",
+            "+--------+---------+-------+\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "groups = df.groupby('Protocol')\n",
+        "groups.agg({'src_bytes':'mean','dst_bytes':'stddev'}).show()"
+      ],
+      "metadata": {
+        "id": "XcMPishr4Nbd",
+        "outputId": "ccf8ff07-c49f-40d2-bb89-9804c168c6bc",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------+-----------------+-----------------+\n",
+            "|Protocol|   avg(src_bytes)|stddev(dst_bytes)|\n",
+            "+--------+-----------------+-----------------+\n",
+            "|     tcp|3388.569965326596|1043771.310041801|\n",
+            "|     udp|97.22772893848308|55.43318653434122|\n",
+            "|    icmp|927.8916893855577|              0.0|\n",
+            "+--------+-----------------+-----------------+\n",
+            "\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "name": "Welcome To Colaboratory",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

@@ -4,6 +4,7 @@ The code and data are based on a training coures i took on Udemy "Best Hands-on 
 The courses is a beginners level to pyspark.
 - Python 3
 - Colab
+- Spark
 
 ## Learning Activities
 Provided a hands on PySpark practices using real case studies from academia and industry to be able to work interactively with massive data.

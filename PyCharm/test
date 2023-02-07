@@ -1,0 +1,331 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/bhandiaRE/Python-Data-Transformation/blob/main/PyCharm/test\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "zGhTbdlyn-Dh",
+        "outputId": "41c8f5c0-37d7-4cca-89a6-19d67436a3f0"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/drive\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip3 install pyspark"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "NF1IFYPjsD7o",
+        "outputId": "a8e0262a-b44d-4116-c120-8cd49edb9d1e"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/\n",
+            "Collecting pyspark\n",
+            "  Downloading pyspark-3.3.1.tar.gz (281.4 MB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m281.4/281.4 MB\u001b[0m \u001b[31m4.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h  Preparing metadata (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "Collecting py4j==0.10.9.5\n",
+            "  Downloading py4j-0.10.9.5-py2.py3-none-any.whl (199 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m199.7/199.7 KB\u001b[0m \u001b[31m17.3 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hBuilding wheels for collected packages: pyspark\n",
+            "  Building wheel for pyspark (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for pyspark: filename=pyspark-3.3.1-py2.py3-none-any.whl size=281845512 sha256=e383c2783bc18b0cfa0482dc4ae30d78eea3012e7ff22a9bd419f981590dc11e\n",
+            "  Stored in directory: /root/.cache/pip/wheels/43/dc/11/ec201cd671da62fa9c5cc77078235e40722170ceba231d7598\n",
+            "Successfully built pyspark\n",
+            "Installing collected packages: py4j, pyspark\n",
+            "Successfully installed py4j-0.10.9.5 pyspark-3.3.1\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from pyspark.sql import SparkSession\n",
+        "spark = SparkSession.builder.master('local[*]').getOrCreate()\n",
+        "spark"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 219
+        },
+        "id": "VV0lOx7zwoDh",
+        "outputId": "2a6f0b3e-d1c9-4914-f040-9a37a99277de"
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<pyspark.sql.session.SparkSession at 0x7f9a7bfd99d0>"
+            ],
+            "text/html": [
+              "\n",
+              "            <div>\n",
+              "                <p><b>SparkSession - in-memory</b></p>\n",
+              "                \n",
+              "        <div>\n",
+              "            <p><b>SparkContext</b></p>\n",
+              "\n",
+              "            <p><a href=\"http://a1bfbd61aece:4040\">Spark UI</a></p>\n",
+              "\n",
+              "            <dl>\n",
+              "              <dt>Version</dt>\n",
+              "                <dd><code>v3.3.1</code></dd>\n",
+              "              <dt>Master</dt>\n",
+              "                <dd><code>local[*]</code></dd>\n",
+              "              <dt>AppName</dt>\n",
+              "                <dd><code>pyspark-shell</code></dd>\n",
+              "            </dl>\n",
+              "        </div>\n",
+              "        \n",
+              "            </div>\n",
+              "        "
+            ]
+          },
+          "metadata": {},
+          "execution_count": 16
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = spark.read.text(\"/content/drive/MyDrive/supermarketsales.json\")\n",
+        "df.show()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "_gXV_JL_wx6f",
+        "outputId": "2dc24a9e-927a-4955-c42d-eaef6e78e9fb"
+      },
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+\n",
+            "|               value|\n",
+            "+--------------------+\n",
+            "|                   [|\n",
+            "|                   {|\n",
+            "|    \"Invoice ID\":...|\n",
+            "|      \"Branch\": \"A\",|\n",
+            "|    \"City\": \"Yang...|\n",
+            "|    \"Customer typ...|\n",
+            "|    \"Gender\": \"Fe...|\n",
+            "|    \"Product line...|\n",
+            "|    \"Unit price\":...|\n",
+            "|      \"Quantity\": 7,|\n",
+            "|    \"Tax 5%\": 26....|\n",
+            "|    \"Total\": 548....|\n",
+            "|    \"Date\": \"1/5/...|\n",
+            "|    \"Time\": \"13:08\",|\n",
+            "|    \"Payment\": \"E...|\n",
+            "|     \"cogs\": 522.83,|\n",
+            "|    \"gross margin...|\n",
+            "|    \"gross income...|\n",
+            "|       \"Rating\": 9.1|\n",
+            "|                  },|\n",
+            "+--------------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from pyspark.sql.functions import *\n",
+        "split_data = split(df['value'], ':')\n",
+        "\n",
+        "df = df.withColumn('Stats', split_data.getItem(0))\\\n",
+        "        .withColumn('Ans', split_data.getItem(1))\\\n",
+        "        .dropna(subset = ['Ans'])\\\n",
+        "        .drop(\"value\")\n",
+        "df.show()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "4SeXsx66xSPV",
+        "outputId": "072d74cb-1c99-4bb8-f06c-982dbbcd1ccc"
+      },
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+--------------------+\n",
+            "|               Stats|                 Ans|\n",
+            "+--------------------+--------------------+\n",
+            "|        \"Invoice ID\"|      \"750-67-8428\",|\n",
+            "|            \"Branch\"|                \"A\",|\n",
+            "|              \"City\"|           \"Yangon\",|\n",
+            "|     \"Customer type\"|           \"Member\",|\n",
+            "|            \"Gender\"|           \"Female\",|\n",
+            "|      \"Product line\"| \"Health and beau...|\n",
+            "|        \"Unit price\"|              74.69,|\n",
+            "|          \"Quantity\"|                  7,|\n",
+            "|            \"Tax 5%\"|            26.1415,|\n",
+            "|             \"Total\"|           548.9715,|\n",
+            "|              \"Date\"|         \"1/5/2019\",|\n",
+            "|              \"Time\"|                 \"13|\n",
+            "|           \"Payment\"|          \"Ewallet\",|\n",
+            "|              \"cogs\"|             522.83,|\n",
+            "|    \"gross margin...|        4.761904762,|\n",
+            "|      \"gross income\"|            26.1415,|\n",
+            "|            \"Rating\"|                 9.1|\n",
+            "|        \"Invoice ID\"|      \"226-31-3081\",|\n",
+            "|            \"Branch\"|                \"C\",|\n",
+            "|              \"City\"|        \"Naypyitaw\",|\n",
+            "+--------------------+--------------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df1 =df.withColumn('Ans', regexp_replace('Ans', '\\\"', ''))\\\n",
+        "        .withColumn('Ans', regexp_replace('Ans', '\\ ', ''))\\\n",
+        "        .withColumn('Ans', regexp_replace('Ans', '\\,', ''))\\\n",
+        "        .withColumn('Stats', regexp_replace('Stats', '\\\"', ''))\\\n",
+        "        .withColumn('Stats', regexp_replace('Stats', '\\ ', ''))\n",
+        "df1.show()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "M_AJ-URLxg2-",
+        "outputId": "bf55c346-9677-4f1d-c1f8-8924fd37dae7"
+      },
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+--------------------+---------------+\n",
+            "|               Stats|            Ans|\n",
+            "+--------------------+---------------+\n",
+            "|           InvoiceID|    750-67-8428|\n",
+            "|              Branch|              A|\n",
+            "|                City|         Yangon|\n",
+            "|        Customertype|         Member|\n",
+            "|              Gender|         Female|\n",
+            "|         Productline|Healthandbeauty|\n",
+            "|           Unitprice|          74.69|\n",
+            "|            Quantity|              7|\n",
+            "|               Tax5%|        26.1415|\n",
+            "|               Total|       548.9715|\n",
+            "|                Date|       1/5/2019|\n",
+            "|                Time|             13|\n",
+            "|             Payment|        Ewallet|\n",
+            "|                cogs|         522.83|\n",
+            "|grossmarginpercen...|    4.761904762|\n",
+            "|         grossincome|        26.1415|\n",
+            "|              Rating|            9.1|\n",
+            "|           InvoiceID|    226-31-3081|\n",
+            "|              Branch|              C|\n",
+            "|                City|      Naypyitaw|\n",
+            "+--------------------+---------------+\n",
+            "only showing top 20 rows\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df1.createOrReplaceTempView(\"Archive\")\n",
+        "\n",
+        "df2 = spark.sql(\"\"\"\n",
+        "            SELECT ROUND(SUM(Ans)) AS Total_Gross_Income FROM Archive\n",
+        "            WHERE Stats='grossincome'\n",
+        "\"\"\")\n",
+        "df2.show()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "tcz47N2sxlfc",
+        "outputId": "a9a79fd7-4c8c-4794-cc63-24b0c751373d"
+      },
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "+------------------+\n",
+            "|Total_Gross_Income|\n",
+            "+------------------+\n",
+            "|           15379.0|\n",
+            "+------------------+\n",
+            "\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "name": "Welcome To Colaboratory",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

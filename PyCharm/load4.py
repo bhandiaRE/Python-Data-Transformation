@@ -14,7 +14,7 @@ class Load:
         #df.coalesce(1).write.option("header", "true").csv("transformed_marketsales")
 
     def insert_into_sql(self,df):
-        server = 'LAPTOP-3MOD7J3C\SQLEXPRESS'
+        server = 'LAPTOP\SQLEXPRESS'
         database = 'Sasol'
         cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server}; \
                               SERVER=' + server + '; \
